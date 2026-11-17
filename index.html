@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Math Mastery: Permutations & Combinations | Designed by Mr/Ayman Abo3Gor</title>
+<script>window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['$$','$$']]}};</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-chtml.js" async></script>
+<style>
+:root{--p:#0369a1;--s:#0284c7;--bg:#ffffff;--card:#ffffff;--tx:#0f172a;--mut:#475569;--ok:#047857;--bad:#b91c1c;--line:#2563eb}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:17px/1.65 "Segoe UI",system-ui,Arial,sans-serif}
+
+/* ================= SECURITY LOCK SCREEN STYLES ================= */
+#lock-overlay{position:fixed;inset:0;background:linear-gradient(135deg,#0f172a 0%,#0369a1 100%);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1.2rem;color:#fff}
+.lock-box{background:#ffffff;color:var(--tx);max-width:430px;width:100%;border-radius:16px;padding:2rem;text-align:center;box-shadow:0 20px 40px rgba(0,0,0,0.4);border:2px solid var(--line)}
+.lock-box h2{margin:0 0 .5rem;color:var(--p);font-size:1.5rem}
+.lock-box p{color:var(--mut);font-size:.95rem;margin-bottom:1.2rem}
+.lock-input{width:100%;padding:.8rem 1rem;font-size:1.2rem;text-align:center;letter-spacing:4px;font-weight:bold;border:2px solid var(--line);border-radius:10px;margin-bottom:1rem;outline:none}
+.lock-input:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(37,99,235,0.2)}
+.lock-btn{width:100%;padding:.8rem;background:var(--line);color:#fff;border:none;border-radius:10px;font-size:1.05rem;font-weight:bold;cursor:pointer;transition:.2s}
+.lock-btn:hover{background:var(--p)}
+.lock-err{color:var(--bad);font-weight:600;font-size:.9rem;margin-top:.8rem;min-height:1.4rem}
+.ban-screen{background:#fef2f2;border:2px solid var(--bad);color:var(--bad);padding:1.2rem;border-radius:10px;font-weight:bold}
+#app-content{display:none}
+
+/* ================= DASHBOARD STYLES ================= */
+header{padding:2.2rem 1.2rem 1.4rem;text-align:center;background:linear-gradient(135deg,#e0f2fe,#ffffff 70%);border-bottom:3px solid var(--line)}
+header h1{margin:0 0 .4rem;font-size:clamp(1.5rem,4vw,2.4rem);color:var(--s)}
+header p{margin:0;color:var(--mut)}
+#score{display:inline-block;margin-top:.8rem;padding:.25rem .9rem;border:1.5px solid var(--line);border-radius:99px;color:var(--ok)}
+nav{position:sticky;top:0;z-index:5;display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;padding:.7rem;background:#ffffffee;backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+nav button{cursor:pointer;background:var(--card);color:var(--tx);border:1px solid var(--line);padding:.5rem .9rem;border-radius:8px;font:inherit;font-size:.95rem}
+nav button.on{background:var(--line);border-color:var(--line);color:#fff}
+nav button:focus-visible,button:focus-visible{outline:2px solid var(--s);outline-offset:2px}
+main{max-width:920px;margin:0 auto;padding:1.2rem}
+section{display:none}section.on{display:block}
+h2{color:var(--s);margin:1rem 0 .3rem}
+h3{color:#0f766e;margin:1.6rem 0 .6rem;border-left:4px solid var(--p);padding-left:.6rem}
+.card{background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:1rem 1.2rem;margin:.8rem 0;overflow-x:auto}
+.tip{border-left:4px solid var(--s)}
+
+/* FIXED FORMULA CARDS LAYOUT TO PREVENT MATHJAX OVERFLOW */
+.formulas{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:.8rem}
+.fc{cursor:pointer;text-align:center;background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:.9rem .75rem;transition:.2s;min-width:0;overflow:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center}
+.fc:hover,.fc.open{background:#e0f2fe}
+.fc .math-wrap{width:100%;overflow-x:auto;overflow-y:hidden;padding:.2rem 0;scrollbar-width:thin}
+.fc mjx-container{font-size:92% !important;max-width:100%}
+.fc small{display:block;color:var(--mut);margin-top:.4rem}
+.fc .ex{display:none;margin-top:.5rem;color:#0f766e;font-size:.9rem;width:100%;overflow-x:auto}
+.fc.open .ex{display:block}
+
+.tog{cursor:pointer;margin:.5rem 0;background:transparent;color:var(--s);border:1px solid var(--s);padding:.35rem .9rem;border-radius:7px;font:inherit;font-size:.92rem}
+.tog:hover{background:var(--line);color:#fff}
+.sol{display:none;margin-top:.6rem;padding:.7rem 1rem;background:#f0f9ff;border-left:4px solid var(--ok);border-radius:6px;overflow-x:auto}
+.sol.show{display:block}
+.opts{display:grid;gap:.4rem;margin:.5rem 0}
+.opt{cursor:pointer;text-align:left;background:#fff;color:var(--tx);border:1.5px solid var(--line);border-radius:8px;padding:.5rem .8rem;font:inherit}
+.opt:hover:not(:disabled){border-color:var(--s)}
+.opt.right{border-color:var(--ok);background:#d1fae5}
+.opt.wrong{border-color:var(--bad);background:#fee2e2}
+.fb{min-height:1.4rem;font-weight:600}
+.tag{display:inline-block;font-size:.8rem;color:#fff;background:var(--s);border-radius:5px;padding:0 .5rem;margin-right:.4rem}
+.nx{display:flex;justify-content:space-between;margin:1.5rem 0}
+footer{text-align:center;padding:2rem 1rem;color:var(--mut);border-top:1px solid var(--line);margin-top:2rem}
+footer b{color:var(--s);font-size:1.1rem}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.wg input[type=range]{vertical-align:middle;width:130px}
+.chips{display:flex;flex-wrap:wrap;gap:.35rem;margin:.6rem 0}
+.chip{cursor:pointer;border:1.5px solid var(--line);background:#fff;color:var(--tx);border-radius:7px;padding:.15rem .55rem;font:inherit;font-size:.9rem}
+.chip:hover,.chip.on{background:var(--line);color:#fff}
+.pas{overflow-x:auto;text-align:center;padding-bottom:.3rem}
+.prw{display:flex;justify-content:center;gap:3px;margin:3px 0;min-width:max-content}
+.pc{cursor:pointer;min-width:2.4rem;border:1px solid var(--line);background:#fff;color:var(--tx);border-radius:6px;padding:.1rem .3rem;font:inherit;font-size:.9rem}
+.pc.sel{background:var(--line);color:#fff}
+.pc.par{background:#bae6fd;border-color:var(--s)}
+.gt{border-collapse:collapse;margin:.6rem auto}
+.gt td{border:1px solid var(--line);padding:.25rem .5rem;text-align:center;min-width:2.6rem;font-size:.9rem}
+.gt td.st{background:#d1fae5}.gt td.en{background:#fde68a;font-weight:700}
+.note{border-left:4px solid #b45309}
+.wgo{margin-top:.5rem;font-weight:600;color:#0f766e}
+</style>
+</head>
+<body>
+
+<!-- ================= LOCK SCREEN ================= -->
+<div id="lock-overlay">
+  <div class="lock-box" id="lock-box">
+    <div style="font-size:2.5rem;margin-bottom:.5rem">🔒</div>
+    <h2>Protected STEM Dashboard</h2>
+    <p>Enter the hourly access code provided by <b>Mr/Ayman Abo3Gor</b></p>
+    <div id="auth-form">
+      <input type="password" id="pass-input" class="lock-input" placeholder="••••" maxlength="10" onkeydown="if(event.key==='Enter')verifyAccess()">
+      <button class="lock-btn" onclick="verifyAccess()">Unlock Dashboard</button>
+      <div class="lock-err" id="lock-err"></div>
+      <div style="font-size:.8rem;color:var(--mut);margin-top:.8rem" id="ip-display">Checking connection security...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= PROTECTED CONTENT ================= -->
+<div id="app-content">
+<header>
+<h1>Math Mastery: Permutations &amp; Combinations | Designed by Mr/Ayman Abo3Gor</h1>
+<p>Concept → Solved examples → Practice, one module at a time</p>
+<div id="score">Quiz score: 0 / 0</div>
+</header>
+<nav id="nav" aria-label="Modules"></nav>
+<main id="main"></main>
+<footer><b>Mr/Ayman Abo3Gor</b><br>Math Mastery · All rights reserved</footer>
+</div>
+
+<script>
+/* ================= DYNAMIC SECURITY & IP LOCK SYSTEM ================= */
+const SECRET_SALT = 2026; // الرقم السري الخاص بك (تقدر تغيره لأي رقم)
+const MAX_ATTEMPTS = 3;   // عدد المحاولات المسموحة قبل الحظر
+let userIP = "unknown_client";
+
+// جلب عنوان الـ IP الخاص بالطالب مجاناً
+fetch('https://api.ipify.org?format=json')
+  .then(res => res.json())
+  .then(data => {
+    userIP = data.ip;
+    document.getElementById('ip-display').textContent = `Session IP: ${userIP} • Protected`;
+    checkBanStatus();
+  })
+  .catch(() => {
+    document.getElementById('ip-display').textContent = `Local Device Security Active`;
+    checkBanStatus();
+  });
+
+// دالة حساب الباسورد المتغير حسب اليوم والشهر والساعة الحالية
+function getHourlyPassword() {
+  const now = new Date();
+  const day = now.getDate();        // اليوم (1 - 31)
+  const month = now.getMonth() + 1; // الشهر (1 - 12)
+  const hour = now.getHours();      // الساعة (0 - 23)
+  // المعادلة: (اليوم * 100 + الساعة) + (الشهر * 7) + الرقم السري
+  return String((day * 100 + hour) + (month * 7) + SECRET_SALT);
+}
+
+function getStorageKey() {
+  return `stem_lock_${userIP}`;
+}
+
+function checkBanStatus() {
+  const record = JSON.parse(localStorage.getItem(getStorageKey()) || '{"attempts":0,"bannedUntil":0}');
+  if (record.bannedUntil && Date.now() < record.bannedUntil) {
+    showBanScreen(record.bannedUntil);
+    return true;
+  }
+  return false;
+}
+
+function showBanScreen(until) {
+  const hoursLeft = Math.ceil((until - Date.now()) / (1000 * 60 * 60));
+  document.getElementById('auth-form').innerHTML = `
+    <div class="ban-screen">
+      ⛔ ACCESS DENIED & IP BLOCKED<br><br>
+      <span style="font-weight:normal;font-size:.9rem">
+        Too many failed password attempts from IP: <b>${userIP}</b>.<br>
+        Access is locked for <b>${hoursLeft} hours</b>. Contact Mr/Ayman Abo3Gor.
+      </span>
+    </div>`;
+}
+
+function verifyAccess() {
+  if (checkBanStatus()) return;
+  const input = document.getElementById('pass-input').value.trim();
+  const errEl = document.getElementById('lock-err');
+  const key = getStorageKey();
+  const record = JSON.parse(localStorage.getItem(key) || '{"attempts":0,"bannedUntil":0}');
+
+  if (input === getHourlyPassword()) {
+    // تصفير المحاولات وفتح الـ Dashboard
+    localStorage.setItem(key, JSON.stringify({ attempts: 0, bannedUntil: 0 }));
+    document.getElementById('lock-overlay').style.display = 'none';
+    document.getElementById('app-content').style.display = 'block';
+    if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise();
+  } else {
+    record.attempts += 1;
+    const left = MAX_ATTEMPTS - record.attempts;
+    if (left <= 0) {
+      // حظر لمدة 24 ساعة
+      record.bannedUntil = Date.now() + (24 * 60 * 60 * 1000);
+      localStorage.setItem(key, JSON.stringify(record));
+      showBanScreen(record.bannedUntil);
+    } else {
+      localStorage.setItem(key, JSON.stringify(record));
+      errEl.textContent = `❌ Incorrect code! ${left} attempt(s) remaining before IP lock.`;
+      document.getElementById('pass-input').value = '';
+    }
+  }
+}
+
+/* ================= ORIGINAL DASHBOARD CONTENT ================= */
+const R=String.raw;
+const M=[
+/* ================= MODULE 1 ================= */
+{t:"1 · Counting Principle",
+intro:R`<h2>The Fundamental Counting Principle</h2>
+<p>Permutations and combinations are "counting without counting": we find the number of ways without listing them all. Where do we need it?</p>
+<div class="card tip"><b>Real-life motivation</b><br>
+• <b>Handshakes:</b> at a party of 25 people where everyone shakes hands with everyone else, how many handshakes? (Order doesn't matter — a <i>combination</i>: \(\frac{25\times24}{2}=300\).)<br>
+• <b>ATM PIN:</b> you remember the digits 1, 3, 5, 9 but not their order. At most how many trials? Four choices for the first digit, 3 for the second, 2 for the third, 1 for the last: \(4\times3\times2\times1=24\).<br>
+• <b>Routes:</b> 2 roads from A to B and 3 roads from B to C give \(2\times3=6\) routes from A to C via B.<br>
+• <b>Ice cream:</b> 3 cone types and 31 flavors give \(3\times31=93\) single-scoop cones.</div>
+<div class="formulas">
+<div class="fc"><b>Multiplication Rule</b><div class="math-wrap">\(m\times n\)</div><small>Event 1 <u>and then</u> event 2</small><div class="ex">Cone (3) and flavor (31): 93</div></div>
+<div class="fc"><b>Addition Rule</b><div class="math-wrap">\(m+n\)</div><small>Event 1 <u>or</u> event 2 (never both)</small><div class="ex">5 doors: 2 on one side + 3 on the other = 5 ways out</div></div>
+</div>
+<div class="card"><b>Rule of thumb:</b> "AND" means multiply, "OR" means add. For digit problems, draw one box per position, fill each box with its number of choices, and multiply. Start with the most restricted box first (e.g., the first digit can't be 0; the last digit of an even number must be even).</div>`,
+ex:[
+["Routes: 2 roads A→B and 3 roads B→C. How many routes from A to C via B?",R`Two stages in order, so multiply: \(2\times3=\mathbf{6}\) (pairs px, py, pz, qx, qy, qz).`],
+["Two dice are thrown twice. In how many ways does the first throw total 5 and the second total 4?",R`Total 5: (1,4),(2,3),(3,2),(4,1) = 4 ways. Total 4: (1,3),(2,2),(3,1) = 3 ways. Both happen, so \(4\times3=\mathbf{12}\).`],
+["How many of the first 1000 positive integers have distinct digits?",R`1-digit: 9. 2-digit: \(9\times9=81\) (first digit not 0, second any digit except the first). 3-digit: \(9\times9\times8=648\). Different digit-lengths are separate cases, so add: \(9+81+648=\mathbf{738}\).`],
+["How many numbers between 10 and 10,000 can be formed from 1,2,3,4,5 (i) with no repetition (ii) with repetition?",R`(i) \(5\cdot4+5\cdot4\cdot3+5\cdot4\cdot3\cdot2=20+60+120=\mathbf{200}\).<br>(ii) \(5^2+5^3+5^4=25+125+625=\mathbf{775}\).`]],
+pr:[
+{q:"There are 4 candidates for one lecturer post, selected by the votes of 5 men. In how many ways can the votes be given?",o:["1048","1024","1072","None of these"],a:1,s:R`Each of the 5 men has 4 choices: \(4^5=1024\).`},
+{q:"There are 10 lamps in a hall, each switched on independently. In how many ways can the hall be illuminated?",o:["\\(10^2\\)","18","\\(2^{10}\\)","1023"],a:3,s:R`Each lamp is on/off: \(2^{10}=1024\) states, minus the all-off state (no light): \(\mathbf{1023}\).`},
+{q:"How many 2-digit even numbers can be formed from 1,2,3,4,5 if digits can be repeated?",s:R`Units digit must be 2 or 4 (2 choices); tens digit any of 5. \(5\times2=\mathbf{10}\).`},
+{q:"How many numbers greater than 5000 can be formed with the digits 3,5,7,8,9, no digit repeated?",s:R`5-digit numbers: \(5!=120\) (all are greater than 5000). 4-digit numbers must start with 5, 7, 8 or 9 (4 choices): \(4\times4\times3\times2=96\). Total \(120+96=\mathbf{216}\).`},
+{q:"Mr X forgot his 4-digit ATM code but remembers the digits 1,3,5,9. At most how many trials does he need?",s:R`\(4\times3\times2\times1=\mathbf{24}\).`}]},
+
+/* ================= MODULE 2 ================= */
+{t:"2 · Factorials",
+intro:R`<h2>Factorial Notation</h2>
+<p>A compact way to write a product of consecutive integers: \(n!=n(n-1)(n-2)\cdots3\cdot2\cdot1\). Factorials of negative integers are not defined.</p>
+<div class="formulas">
+<div class="fc"><b>Definition</b><div class="math-wrap">\(n!=n\,(n-1)!\)</div><small>Click for example</small><div class="ex">\(7!=7\times6!\)</div></div>
+<div class="fc"><b>Zero factorial</b><div class="math-wrap">\(0!=1\)</div><small>Click for example</small><div class="ex">Why? \(1!=1\times0!\Rightarrow0!=1\)</div></div>
+<div class="fc"><b>Double-product</b><div class="math-wrap">\((2n)!=2^n\,n!\,[1\cdot3\cdot5\cdots(2n-1)]\)</div><small>Click for example</small><div class="ex">\(6!=2^3\cdot3!\cdot(1\cdot3\cdot5)=8\cdot6\cdot15=720\)</div></div>
+<div class="fc"><b>Range product</b><div class="math-wrap">\((n+1)(n+2)\cdots(2n)=\frac{(2n)!}{n!}\)</div><small>Click for example</small><div class="ex">\(n=3:\ 4\cdot5\cdot6=\frac{720}{6}=120\)</div></div>
+</div>
+<div class="card tip"><b>Strategy for factorial equations:</b> write the bigger factorial in terms of the smaller one (\((n+1)!=(n+1)\,n\,(n-1)!\)), cancel the common factorial, and solve the algebraic equation. Always reject answers that make a factorial negative.<br><br>
+<b>Divisibility facts:</b> \(n!\) is divisible by every integer from 1 to \(n\). So \(n!\) is divisible by 7 and 13 only when \(n\ge13\). The units digit of \(n!\) is 0 for all \(n\ge5\) (a factor 2 and a factor 5 appear).</div>`,
+ex:[
+["Find \\(n\\) if \\((n+1)! = 12\\,(n-1)!\\)",R`\((n+1)\,n\,(n-1)!=12\,(n-1)!\Rightarrow n(n+1)=12\Rightarrow n=\mathbf{3}\) (since \(3\times4=12\)).`],
+["If \\(\\frac1{9!}+\\frac1{10!}=\\frac{x}{11!}\\), find \\(x\\).",R`Multiply by \(11!\): \(\frac{11!}{9!}+\frac{11!}{10!}=x\Rightarrow11\cdot10+11=\mathbf{121}\).`],
+["Find \\(n\\): \\((10-n)!=24\\)",R`\(24=4!\Rightarrow10-n=4\Rightarrow n=\mathbf{6}\).`],
+["Find \\(n\\): \\(n\\,(n+2)!=60\\,n!\\)",R`\((n+2)!=(n+2)(n+1)\,n!\Rightarrow n(n+1)(n+2)=60\Rightarrow n=\mathbf{3}\) (\(3\cdot4\cdot5=60\)).`]],
+pr:[
+{q:"If \\((m+n)!=380\\,(m+n-2)!\\), find \\(m+n\\).",s:R`\((m+n)(m+n-1)=380=20\times19\Rightarrow m+n=\mathbf{20}\).`},
+{q:"If \\((x+y)!=182\\,(x+y-2)!\\) and \\((x-y)!=336\\,(x-y-3)!\\), find \\(x\\) and \\(y\\).",s:R`\((x+y)(x+y-1)=182=14\times13\Rightarrow x+y=14\). \((x-y)(x-y-1)(x-y-2)=336=8\cdot7\cdot6\Rightarrow x-y=8\). So \(x=\mathbf{11},\ y=\mathbf{3}\).`},
+{q:"\\((n+1)(n+2)(n+3)\\times\\cdots\\times(2n)=\\)",o:["\\((2n-1)!\\)","\\(\\frac{(2n)!}{n!}\\)","\\((3n+1)!\\)","\\(\\frac{(2n)!}{(n+1)!}\\)"],a:1,s:R`Multiply and divide by \(n!\): the product from 1 to \(2n\) divided by the product from 1 to \(n\).`},
+{q:"If \\(\\frac{x!}{y!}=8\\times7\\times6\\), then \\(x+y=\\)",o:["21","14","13","11"],a:2,s:R`\(\frac{8!}{5!}=8\cdot7\cdot6\Rightarrow x=8,\ y=5\Rightarrow x+y=13\).`},
+{q:"The number of integer solutions of \\(x=x!\\) is",o:["zero","1","2","infinite"],a:2,s:R`\(1=1!\) and \(2=2!\) work. \(0\ne0!=1\), and for \(x\ge3\), \(x!>x\). So 2 solutions.`},
+{q:"If \\(n!\\) is divisible by both 7 and 13, then",o:["\\(n\\le7\\)","\\(n=10\\)","\\(7\\le n\\le13\\)","\\(n\\ge3\\)"],a:3,s:R`Both primes must appear in \(n!\), so \(n\ge13\). Only (d) is true for every such \(n\). (c) fails, e.g. \(n=10\) is not divisible by 13.`},
+{q:"\\(\\frac{4\\times8\\times12\\times\\cdots\\times(4n-4)(4n)}{4^n}=\\)",o:["\\((4n)!\\)","\\(4n\\,n!\\)","\\(n!\\)","\\((n+4)\\,n!\\)"],a:2,s:R`Factor 4 from each of the \(n\) terms: \(4^n(1\cdot2\cdots n)/4^n=n!\).`},
+{q:"If the units digit of \\(n!\\) is not zero, then",o:["\\(n>4\\)","\\(n<5\\)","\\(n>9\\)","\\(n\\) is odd"],a:1,s:R`From \(5!=120\) onward every factorial ends in 0. So \(n\le4\), i.e. \(n<5\).`},
+{q:"If \\(0\\le\\theta<360^\\circ\\), the solution set of \\((\\cos\\theta)!=1\\) is",o:["{0, 180°, 360°}","{90°, 270°, 360°}","{0, 90°, 270°}","{0, 180°, 270°}"],a:2,s:R`\(0!=1!=1\), so \(\cos\theta=0\) or \(1\): \(\theta=0^\circ,90^\circ,270^\circ\) (360° is excluded).`}]},
+
+/* ================= MODULE 3 ================= */
+{t:"3 · Permutations",
+intro:R`<h2>Permutations</h2>
+<p>A permutation is an <b>arrangement</b>: choosing some or all objects where <b>order matters</b> (ABC and CBA are different).</p>
+<div class="formulas">
+<div class="fc"><b>\({}^nP_r\)</b><div class="math-wrap">\(\frac{n!}{(n-r)!}\)</div><small>Click for example</small><div class="ex">\({}^7P_3=\frac{7!}{4!}=7\cdot6\cdot5=210\)</div></div>
+<div class="fc"><b>Expanded form</b><div class="math-wrap">\(n(n-1)\cdots(n-r+1)\)</div><small>r factors, starting at n</small><div class="ex">\({}^{10}P_4=10\cdot9\cdot8\cdot7=5040\)</div></div>
+<div class="fc"><b>All objects</b><div class="math-wrap">\({}^nP_n=n!\)</div><small>Click for example</small><div class="ex">5 students in a row: \(5!=120\)</div></div>
+</div>
+<div class="card tip"><b>Seating techniques</b><br>
+• <b>Together:</b> glue the group into one block, arrange the blocks, then arrange inside the block.<br>
+• <b>Not together:</b> total − together, or seat the others first and place the restricted people in the gaps.<br>
+• <b>Round table:</b> fix one person to remove rotations, giving \((n-1)!\). With numbered chairs rotations are different, so each seat is distinct.<br>
+• <b>Digits:</b> fill the restricted boxes first (no leading zero, even last digit, "greater than" conditions).</div>`,
+ex:[
+["If \\({}^{10}P_r=5040\\), find \\(r\\).",R`\(5040=10\times9\times8\times7={}^{10}P_4\Rightarrow r=\mathbf{4}\).`],
+["If \\({}^9P_5+5\\,{}^9P_4={}^{10}P_r\\), find \\(r\\).",R`\(\frac{9!}{4!}+5\cdot\frac{9!}{5!}=15120+5\cdot3024=30240=10\cdot9\cdot8\cdot7\cdot6={}^{10}P_5\Rightarrow r=\mathbf{5}\).`],
+["If \\({}^{2n+1}P_{n-1}:{}^{2n-1}P_n=3:5\\), find \\(n\\).",R`\(\frac{(2n+1)!/(n+2)!}{(2n-1)!/(n-1)!}=\frac{(2n+1)(2n)}{(n+2)(n+1)\,n}=\frac{2(2n+1)}{(n+1)(n+2)}=\frac35\).<br>\(10(2n+1)=3(n^2+3n+2)\Rightarrow3n^2-11n-4=0\Rightarrow(3n+1)(n-4)=0\Rightarrow n=\mathbf{4}\) (reject \(-\tfrac13\)).`],
+["Seven athletes race. In how many ways can the first three win the prizes?",R`Gold, silver, bronze are different: \({}^7P_3=7\cdot6\cdot5=\mathbf{210}\).`],
+["How many different signals can be given using any number of flags from 5 flags of different colours?",R`Using 1, 2, 3, 4, 5 flags: \(5+20+60+120+120=\mathbf{325}\).`]],
+pr:[
+{q:"A, B, C, D, E sit in a row. (1) No condition.",s:R`\(5!=\mathbf{120}\).`},
+{q:"A, B, C, D, E in a row: A and B must sit next to each other.",s:R`Block (AB) plus 3 others = 4 units: \(4!\times2!=\mathbf{48}\).`},
+{q:"A, B, C, D, E in a row: A and B must NOT sit next to each other.",s:R`\(120-48=\mathbf{72}\).`},
+{q:"A, B, C, D, E in a row: B, C, E must be adjacent.",s:R`Block of 3 plus A, D = 3 units: \(3!\times3!=\mathbf{36}\).`},
+{q:"A, B, C, D, E in a row: A and E must be at the two ends.",s:R`Ends: \(2!\) ways; middle three: \(3!\). \(2\times6=\mathbf{12}\).`},
+{q:"In how many ways can 4 boys and 3 girls sit in a row so that boys sit together and girls sit together?",s:R`Two blocks can swap places (2 ways), boys \(4!\), girls \(3!\): \(2\times24\times6=\mathbf{288}\).`},
+{q:"The number of ways 4 boys and 3 girls sit in a row of 7 seats, boys together and girls together, is",o:["\\(7!\\)","\\(4!\\,3!\\)","\\({}^7P_3\\times{}^7P_4\\)","\\(2\\cdot4!\\,3!\\)"],a:3,s:R`The two blocks can be in either order, so multiply by 2: \(2\cdot4!\,3!=288\).`},
+{q:"How many numbers can be formed from 0,1,2,3,4 that are \\(\\ge1000\\) and \\(<4000\\) (digits may repeat)?",o:["125","105","375","625"],a:2,s:R`4-digit numbers with first digit 1, 2 or 3 (3 choices); each other digit has 5 choices: \(3\times5^3=375\).`},
+{q:"How many even numbers with different digits can be formed from 1,2,3,4,5 and are greater than 300?",s:R`3-digit: first 3 (last 2 or 4, middle 3) = 6; first 4 (last 2) = 3; first 5 = 6, total 15. 4-digit: \(2\times4\times3\times2=48\). 5-digit: \(2\times4!=48\). Total \(15+48+48=\mathbf{111}\).`},
+{q:"How many numbers between 100 and 1000 have at least one digit equal to 7?",o:["900","648","729","252"],a:3,s:R`Total 3-digit numbers: 900. With no 7: \(8\times9\times9=648\). At least one 7: \(900-648=252\).`},
+{q:"The number of ways to form an even number of 3 different digits, greater than 500, out of {0,2,3,6,7} is",o:["15","18","30","75"],a:0,s:R`First digit 6: last digit 0 or 2 (2 ways), middle 3 ways = 6. First digit 7: last digit 0, 2 or 6 (3 ways), middle 3 ways = 9. Total \(6+9=15\).`},
+{q:"The number of diagonals in a regular polygon is double the number of its sides. How many sides?",o:["5","6","7","8"],a:2,s:R`Diagonals \(=\frac{n(n-3)}2=2n\Rightarrow n-3=4\Rightarrow n=7\).`}]},
+
+/* ================= MODULE 4 ================= */
+{t:"4 · Mixed Problems",
+intro:R`<h2>Advanced Problem Solving</h2>
+<p>Now combine everything: the multiplication rule, factorials and \({}^nP_r\). Before computing, ask three questions: <b>(1)</b> Does order matter? <b>(2)</b> Is repetition allowed? <b>(3)</b> Are there restrictions (together / apart / ends / first digit)?</p>
+<div class="card tip"><b>Complement trick:</b> "at least one" = total − "none". <br><b>Gap method:</b> to keep two groups apart, arrange the unrestricted group first, then choose slots for the restricted group: \(5\) boys give 6 gaps for 3 girls, so \(5!\times{}^6P_3\).</div>`,
+ex:[
+["Five large, four medium and three small books are placed on a shelf so that books of the same size stay together. How many ways?",R`Arrange the 3 size-groups: \(3!\). Inside each group: \(5!\), \(4!\), \(3!\). Total \(\mathbf{3!\times5!\times4!\times3!}\).`],
+["In how many ways can 8 Indians, 4 Americans and 4 Englishmen sit in a row so that people of the same nationality sit together?",R`Arrange the 3 groups: \(3!\); inside the groups: \(8!\,4!\,4!\). Answer: \(\mathbf{3!\,8!\,4!\,4!}\) — don't forget the \(3!\) for the order of the groups.`]],
+pr:[
+{q:"In how many ways can 7 men and 7 women sit around a round table so that no two women sit together?",o:["\\((7!)^2\\)","\\(7!\\times6!\\)","\\((6!)^2\\)","\\(7!\\)"],a:1,s:R`Seat the men around the table: \(6!\). The 7 gaps between them hold the women: \(7!\). Total \(7!\times6!\).`},
+{q:"6 numbered chairs around a circular table. 3 boys and 3 girls sit so that no two boys and no two girls are adjacent. How many arrangements?",o:["44","72","48","12"],a:1,s:R`Boys on odd chairs or on even chairs: 2 patterns. Boys \(3!\), girls \(3!\). Total \(2\times6\times6=72\).`},
+{q:"5 boys and 3 girls stand in a row so that no two girls are together. How many ways?",o:["36000","25600","14400","15600"],a:2,s:R`Boys: \(5!=120\). Girls go in 6 gaps: \({}^6P_3=120\). Total \(120\times120=14400\).`},
+{q:"Eleven circus animals are put in eleven cages (one each). 4 of the cages are too small for 6 of the animals. How many ways of caging all the animals?",s:R`The 4 small cages must take 4 of the 5 other animals: \({}^5P_4=120\). The remaining 7 animals fill the 7 other cages: \(7!=5040\). Total \(120\times5040=\mathbf{604800}\).`},
+{q:"Find the sum of all numbers formed with the digits 2, 3, 4, 5 taken all at a time.",s:R`Each digit appears in each place \(3!=6\) times. Sum of digits \(=14\). Total \(=6\times14\times(1000+100+10+1)=6\times14\times1111=\mathbf{93324}\).`},
+{q:"The number of nine-digit non-zero numbers such that the first four digits are less than the middle digit and the last four digits are greater than the middle digit is",o:["\\(2(4!)\\)","\\(3(7!)/2\\)","\\(2(7!)\\)","\\({}^4P_4\\times{}^4P_4\\)"],a:3,s:R`Only 5 has 4 smaller and 4 larger non-zero digits, so the middle digit is 5. Arrange {1,2,3,4} in the first four places and {6,7,8,9} in the last four: \(4!\times4!\).`},
+{q:"The number of five-digit telephone numbers having at least one digit repeated is",o:["90000","100000","30240","69760"],a:3,s:R`Total \(10^5=100000\). All different: \({}^{10}P_5=30240\). At least one repeated: \(100000-30240=69760\).`},
+{q:"If \\({}^{k+5}P_{k+1}=\\frac{11(k-1)}2\\times{}^{k+3}P_k\\), then one of the values of \\(k\\) is",o:["6","8","5","10"],a:0,s:R`\(\frac{(k+5)!/4!}{(k+3)!/3!}=\frac{(k+5)(k+4)}4=\frac{11(k-1)}2\Rightarrow k^2+9k+20=22k-22\Rightarrow k^2-13k+42=0\Rightarrow k=6\) or \(7\). Only 6 is listed.`}]},
+
+/* ================= MODULE 5 ================= */
+{t:"5 · Combinations",
+intro:R`<h2>Combinations</h2>
+<p>Each group or selection made by taking some or all of a number of things, <b>without reference to the order</b> of the things in the group, is called a <b>combination</b>. If we start considering the order or arrangement inside the group, we are dealing with a <b>permutation</b>.</p>
+<div class="card tip"><b>Example:</b> from the letters A, B, C we can write six arrangements: ABC, BCA, CAB, ACB, BAC, CBA. That is <b>6 permutations</b> but only <b>1 combination</b> (one group: {A, B, C}).<br>
+Taking 2 of the 3 objects a, b, c gives 3 groups: ab, bc, ac (here ab and ba are the same group), and each group has \(2!\) arrangements, so \({}^3P_2=2!\times{}^3C_2=6\).</div>
+<div class="formulas">
+<div class="fc"><b>Formula</b><div class="math-wrap">\({}^nC_r=\frac{n!}{r!\,(n-r)!}\)</div><small>Click for example</small><div class="ex">\({}^{16}C_2=\frac{16\cdot15}{2}=120\)</div></div>
+<div class="fc"><b>Link with \({}^nP_r\)</b><div class="math-wrap">\({}^nP_r=r!\cdot{}^nC_r\)</div><small>Each group has \(r!\) orders</small><div class="ex">\({}^5C_2=\frac{{}^5P_2}{2!}=\frac{20}{2}=10\)</div></div>
+<div class="fc"><b>Special values</b><div class="math-wrap">\({}^nC_0={}^nC_n=1,\ {}^nC_1=n\)</div><small>Click for example</small><div class="ex">\({}^{9}C_9=1,\ {}^{9}C_1=9\)</div></div>
+<div class="fc"><b>All selections</b><div class="math-wrap">\(2^n-1\)</div><small>Any number (at least one) of \(n\) different things</small><div class="ex">5 different books: \(2^5-1=31\) ways to pick at least one</div></div>
+</div>
+<h3>Permutations vs Combinations</h3>
+<div class="formulas">
+<div class="card"><b>Permutations</b> \({}^nP_r=\frac{n!}{(n-r)!}\)<br>Different orderings are different results.<br><i>Clue words:</i> arrangement, schedule, order, word, number, seating.</div>
+<div class="card"><b>Combinations</b> \({}^nC_r=\frac{n!}{r!(n-r)!}\)<br>Each subset of \(r\) objects is one result; order does not matter.<br><i>Clue words:</i> group, committee, sample, selection, team, subset.</div>
+</div>
+<div class="card note"><b>Caution:</b> not every counting problem is a permutation or a combination. Whenever a tree diagram or the multiplication principle can be used directly, use it.</div>
+<h3>Properties of \({}^nC_r\) <small>(click a card)</small></h3>
+<div class="formulas">
+<div class="fc"><b>1. Symmetry</b><div class="math-wrap">\({}^nC_r={}^nC_{n-r}\)</div><small>Choosing \(r\) = leaving out \(n-r\)</small><div class="ex">\({}^{10}C_8={}^{10}C_2=45\)</div></div>
+<div class="fc"><b>2. Equal values</b><div class="math-wrap">If \({}^nC_x={}^nC_y \Rightarrow x=y\) or \(x+y=n\)</div><small>Click for example</small><div class="ex">\({}^nC_8={}^nC_{12}\Rightarrow n=8+12=20\)</div></div>
+<div class="fc"><b>3. Pascal's rule</b><div class="math-wrap">\({}^{n+1}C_r={}^nC_r+{}^nC_{r-1}\)</div><small>Click for example</small><div class="ex">\({}^6C_2={}^5C_2+{}^5C_1=10+5=15\)</div></div>
+<div class="fc"><b>4. Absorption</b><div class="math-wrap">\(r\cdot{}^nC_r=n\cdot{}^{n-1}C_{r-1}\)</div><small>Click for example</small><div class="ex">\(3\cdot{}^5C_3=5\cdot{}^4C_2\Rightarrow30=30\)</div></div>
+<div class="fc"><b>5.</b><div class="math-wrap">\(\frac{{}^nC_r}{r+1}=\frac{{}^{n+1}C_{r+1}}{n+1}\)</div><small>Click for example</small><div class="ex">\(\frac{{}^5C_2}{3}=\frac{{}^6C_3}{6}\Rightarrow\frac{10}{3}=\frac{20}{6}\)</div></div>
+<div class="fc"><b>6. Ratio</b><div class="math-wrap">\(\frac{{}^nC_r}{{}^nC_{r-1}}=\frac{n-r+1}{r}\)</div><small>Click for example</small><div class="ex">\(\frac{{}^8C_3}{{}^8C_2}=\frac{56}{28}=2=\frac{8-3+1}{3}\)</div></div>
+<div class="fc"><b>7. Greatest value</b><div class="math-wrap">\(n\) even: \({}^nC_{n/2}\)<br>\(n\) odd: \({}^nC_{\frac{n\pm1}2}\)</div><small>Click for example</small><div class="ex">\({}^6C_3=20\) is the max of \({}^6C_r\); \({}^7C_3={}^7C_4=35\) for \(n=7\)</div></div>
+<div class="fc"><b>8. Divisibility</b><div class="math-wrap">If \(n\) prime, \(n\mid{}^nC_r\ (1\le r\le n-1)\)</div><small>Click for example</small><div class="ex">\({}^7C_4=35\) is divisible by 7, but \({}^6C_2=15\) is not divisible by 6</div></div>
+</div>
+<div class="card tip"><b>Proof idea for rule 3:</b> pick \(r\) objects from \(n+1\). Either the special object is <u>not</u> chosen (\({}^nC_r\) ways) <u>or</u> it is chosen (the other \(r-1\) come from \(n\): \({}^nC_{r-1}\)). OR means add.</div>
+<h3>🧪 Simulation 1: see order disappear</h3>
+<div class="card wg" data-w="comb"><b>Choose \(r\) letters out of \(n\)</b><br>
+n = <input type="range" class="n" min="2" max="8" value="4" aria-label="n"> <b class="nv"></b> &nbsp; r = <input type="range" class="r" min="1" max="4" value="2" aria-label="r"> <b class="rv"></b>
+<div class="wgo out"></div><div class="chips"></div><div class="perm"></div>
+<small>Click any group to see the different orders hidden inside it.</small></div>
+<h3>🧪 Simulation 2: Pascal's triangle</h3>
+<div class="card wg" data-w="pas"><b>Click any number</b> to see which two numbers above it add up to it (Pascal's rule).
+<div class="pas"></div><div class="wgo pmsg">Row \(n\), position \(r\): the entry is \({}^nC_r\).</div></div>`,
+ex:[
+[R`How many matches are played in a football championship of 16 teams if every two teams play each other once?`,R`A match is a pair of teams and the order inside a pair is irrelevant: \({}^{16}C_2=\frac{16\cdot15}{2}=\mathbf{120}\).`],
+[R`10 social workers are to work in groups of 2, 3 and 5. In how many ways can we split them into groups of the right size?`,R`Choose 2 of the 10, then 3 of the remaining 8; the last 5 form the final group. \({}^{10}C_2\times{}^8C_3\times{}^5C_5=45\times56\times1=\mathbf{2520}\).`],
+[R`A teacher takes 3 children from her class to the zoo at a time and never takes the same three twice. She finds she goes to the zoo 84 times more than a particular child does. How many children are in the class? (a) 12 (b) 10 (c) 60 (d) none`,R`Trips of the teacher: \({}^nC_3\). Trips of a particular child: \({}^{n-1}C_2\) (choose his 2 companions). So \({}^nC_3-{}^{n-1}C_2=84\). By Pascal, \({}^nC_3-{}^{n-1}C_2={}^{n-1}C_3\), hence \({}^{n-1}C_3=84={}^9C_3\Rightarrow n-1=9\Rightarrow n=\mathbf{10}\) (option b).`],
+[R`Twenty-eight games were played in a tournament, each team playing every other team once. How many teams were there?`,R`\({}^nC_2=28\Rightarrow\frac{n(n-1)}2=28\Rightarrow n^2-n-56=0\Rightarrow(n-8)(n+7)=0\Rightarrow n=\mathbf{8}\).`],
+[R`If \({}^nC_{r-1}=36,\ {}^nC_r=84\) and \({}^nC_{r+1}=126\), find \(r\).`,R`\(\frac{{}^nC_r}{{}^nC_{r-1}}=\frac{n-r+1}{r}=\frac{84}{36}=\frac73\Rightarrow10r-3n=3\).<br>\(\frac{{}^nC_{r+1}}{{}^nC_r}=\frac{n-r}{r+1}=\frac{126}{84}=\frac32\Rightarrow5r-2n=-3\).<br>Doubling the second: \(10r-4n=-6\). Subtract from the first: \(n=9\), then \(r=\mathbf{3}\). Check: \({}^9C_2=36,\ {}^9C_3=84,\ {}^9C_4=126\).`],
+[R`If \({}^{n+1}C_{r+1}:{}^nC_r:{}^{n-1}C_{r-1}=11:6:3\), find \(nr\).`,R`First two terms: \(\frac{{}^{n+1}C_{r+1}}{{}^nC_r}=\frac{n+1}{r+1}=\frac{11}6\Rightarrow6n-11r=5\).<br>Last two terms: \(\frac{{}^nC_r}{{}^{n-1}C_{r-1}}=\frac nr=\frac63=2\Rightarrow n=2r\).<br>Substitute: \(12r-11r=5\Rightarrow r=5,\ n=10\). So \(nr=\mathbf{50}\).`],
+[R`Prove that \({}^nC_r+{}^nC_{r-1}={}^{n+1}C_r\).`,R`\(\frac{n!}{r!(n-r)!}+\frac{n!}{(r-1)!(n-r+1)!}=\frac{n!}{(r-1)!(n-r)!}\left[\frac1r+\frac1{n-r+1}\right]=\frac{n!}{(r-1)!(n-r)!}\cdot\frac{n+1}{r(n-r+1)}=\frac{(n+1)!}{r!\,(n-r+1)!}={}^{n+1}C_r\). ∎`]],
+pr:[
+{q:R`Evaluate \({}^8C_3\).`,o:[R`24`,R`56`,R`336`,R`28`],a:1,s:R`\(\frac{8\cdot7\cdot6}{3\cdot2\cdot1}=56\).`},
+{q:R`If \({}^nC_2=45\), then \(n=\)`,o:[R`8`,R`9`,R`10`,R`11`],a:2,s:R`\(\frac{n(n-1)}2=45\Rightarrow n(n-1)=90=10\times9\Rightarrow n=10\).`},
+{q:R`If \({}^nC_8={}^nC_{12}\), then \(n=\)`,o:[R`4`,R`20`,R`96`,R`40`],a:1,s:R`\(8\ne12\), so \(8+12=n\Rightarrow n=20\) (rule 2).`},
+{q:R`\({}^{15}C_8+{}^{15}C_9-{}^{16}C_9=\)`,o:[R`0`,R`1`,R`\({}^{15}C_8\)`,R`\({}^{16}C_8\)`],a:0,s:R`Pascal: \({}^{15}C_8+{}^{15}C_9={}^{16}C_9\), so the expression is 0.`},
+{q:R`If \({}^{2n}C_3:{}^nC_2=44:3\), then \(n=\)`,o:[R`4`,R`5`,R`6`,R`7`],a:2,s:R`\(\frac{2n(2n-1)(2n-2)/6}{n(n-1)/2}=\frac{4(2n-1)}{3}=\frac{44}{3}\Rightarrow2n-1=11\Rightarrow n=6\).`},
+{q:R`If \({}^nC_4={}^nC_6\), then \({}^nC_2=\)`,o:[R`45`,R`55`,R`90`,R`10`],a:0,s:R`\(4+6=n\Rightarrow n=10\), and \({}^{10}C_2=45\).`},
+{q:R`The greatest value of \({}^{11}C_r\) is`,o:[R`330`,R`462`,R`165`,R`252`],a:1,s:R`\(n=11\) is odd, so the max is \({}^{11}C_5={}^{11}C_6=462\).`},
+{q:R`\({}^5C_0+{}^5C_1+{}^5C_2+{}^5C_3+{}^5C_4+{}^5C_5=\)`,o:[R`16`,R`32`,R`31`,R`64`],a:1,s:R`\(1+5+10+10+5+1=32=2^5\).`},
+{q:R`If \({}^nC_r\) denotes the number of combinations of \(n\) things taken \(r\) at a time, then \({}^nC_{r+1}+{}^nC_{r-1}+2\,{}^nC_r\) equals`,o:[R`\({}^{n+1}C_{r+1}\)`,R`\({}^{n+2}C_r\)`,R`\({}^{n+2}C_{r+1}\)`,R`\({}^{n+1}C_r\)`],a:2,s:R`Group as \(({}^nC_{r+1}+{}^nC_r)+({}^nC_r+{}^nC_{r-1})={}^{n+1}C_{r+1}+{}^{n+1}C_r={}^{n+2}C_{r+1}\).`},
+{q:R`\({}^nC_r+2\,{}^nC_{r+1}+{}^nC_{r+2}\) is equal to \((2\le r\le n)\)`,o:[R`\(2\,{}^nC_{r+2}\)`,R`\({}^{n+1}C_{r+1}\)`,R`\({}^{n+2}C_{r+2}\)`,R`None of these`],a:2,s:R`\(({}^nC_r+{}^nC_{r+1})+({}^nC_{r+1}+{}^nC_{r+2})={}^{n+1}C_{r+1}+{}^{n+1}C_{r+2}={}^{n+2}C_{r+2}\).`},
+{q:R`\({}^nC_r+4\,{}^nC_{r-1}+6\,{}^nC_{r-2}+4\,{}^nC_{r-3}+{}^nC_{r-4}\) is equal to`,o:[R`\({}^{n+4}C_r\)`,R`\(2\cdot{}^{n+4}C_{r-1}\)`,R`\(4\cdot{}^nC_r\)`,R`\(11\cdot{}^nC_r\)`],a:0,s:R`The coefficients 1, 4, 6, 4, 1 are the entries of row 4 of Pascal's triangle. Applying Pascal's rule four times (or Vandermonde with \({}^4C_k\)) gives \({}^{n+4}C_r\).`},
+{q:R`If \({}^{n-1}C_r=(k^2-3)\,{}^nC_{r+1}\), then \(k\) belongs to the interval`,o:[R`\([\sqrt{-3},\sqrt3]\)`,R`\((-\infty,-2)\)`,R`\((2,\infty)\)`,R`\((\sqrt3,2]\)`],a:3,s:R`\({}^nC_{r+1}=\frac{n}{r+1}\,{}^{n-1}C_r\), so \(k^2-3=\frac{r+1}{n}\). Since \(0\le r\le n-1\), \(\frac{r+1}{n}\in(0,1]\). Hence \(3<k^2\le4\), i.e. \(k\in(\sqrt3,2]\) for positive \(k\).`},
+{q:R`Prove that \(r\cdot{}^nC_r=n\cdot{}^{n-1}C_{r-1}\).`,s:R`\(r\cdot\frac{n!}{r!(n-r)!}=\frac{n!}{(r-1)!(n-r)!}=n\cdot\frac{(n-1)!}{(r-1)!(n-r)!}=n\cdot{}^{n-1}C_{r-1}\). ∎`},
+{q:R`Prove that \(\frac{{}^nC_r}{{}^nC_{r-1}}=\frac{n-r+1}{r}\).`,s:R`\(\frac{n!}{r!(n-r)!}\times\frac{(r-1)!(n-r+1)!}{n!}=\frac{(r-1)!\,(n-r+1)(n-r)!}{r\,(r-1)!\,(n-r)!}=\frac{n-r+1}{r}\). ∎`},
+{q:R`Prove that \(\frac{{}^nC_r}{r+1}=\frac{{}^{n+1}C_{r+1}}{n+1}\).`,s:R`LHS \(=\frac{n!}{(r+1)\,r!\,(n-r)!}=\frac{n!}{(r+1)!(n-r)!}=\frac1{n+1}\cdot\frac{(n+1)!}{(r+1)!\,(n-r)!}=\frac{{}^{n+1}C_{r+1}}{n+1}\). ∎`}]},
+
+/* ================= MODULE 6 ================= */
+{t:"6 · Combination Problems",
+intro:R`<h2>Solving Selection Problems</h2>
+<p>Pick the tool by reading the wording: <b>group / committee / team</b> → \({}^nC_r\). <b>word / number / arrangement</b> → select with \({}^nC_r\) <u>then</u> arrange with \(r!\).</p>
+<div class="formulas">
+<div class="card"><b>Select, then arrange</b><br>\({}^nC_r\times r!={}^nP_r\)<br>e.g. words from some consonants and vowels.</div>
+<div class="card"><b>Always include \(k\) / exclude \(m\)</b><br>Remove them from the pool: \({}^{n-k-m}C_{r-k}\).</div>
+<div class="card"><b>At least one</b><br>Total − none, or \(2^n-1\) for any non-empty selection.</div>
+<div class="card"><b>Exactly / mixed groups</b><br>Choose from each group and multiply: \({}^aC_x\times{}^bC_y\). Different cases add.</div>
+<div class="card"><b>Identical objects</b><br>With \(p,q,r\) identical items of three kinds, selections \(=(p+1)(q+1)(r+1)-1\).</div>
+<div class="card"><b>Geometry</b><br>Lines from \(n\) points: \({}^nC_2\). Triangles: \({}^nC_3\). Diagonals: \({}^nC_2-n\). Rectangles in a grid: \({}^aC_2\times{}^bC_2\) over the grid lines.</div>
+</div>
+<div class="card tip"><b>Lattice paths:</b> to go from one corner of a grid to the opposite corner using only Right (R) and Up/Down (U) moves, every path is a word with \(R\) rights and \(U\) ups. Choose which positions are the ups: \({}^{R+U}C_U\).</div>
+<h3>🧪 Simulation 3: grid path counter</h3>
+<div class="card wg" data-w="grid"><b>Move only right or up</b> from the bottom-left corner. Each node shows the number of paths reaching it (they add up exactly like Pascal's triangle).<br>
+Columns = <input type="range" class="cc" min="1" max="8" value="6" aria-label="columns"> <b class="ccv"></b> &nbsp; Rows = <input type="range" class="rr" min="1" max="6" value="4" aria-label="rows"> <b class="rrv"></b>
+<div class="gtw" style="overflow-x:auto"></div><div class="wgo out"></div></div>`,
+ex:[
+[R`In a railway network a small island has 15 stations. How many different types of tickets must be printed for each class if every station has tickets for all the other stations?`,R`A ticket A→B differs from B→A, so order matters: \({}^{15}P_2=2\times{}^{15}C_2=2\times105=\mathbf{210}\).`],
+[R`There are 10 points on a plane, no three collinear. Lines are formed by joining these points. Find the maximum number of points of intersection of these lines.`,R`Lines: \({}^{10}C_2=45\). Each pair of lines meets in at most one point: \({}^{45}C_2=\mathbf{990}\).<br><small>Note: pairs of lines that share an endpoint meet at one of the 10 given points (\(10\times{}^9C_2=360\) such pairs). If only <i>new</i> points are wanted: \(990-360=630\).</small>`],
+[R`An algebra book has 4 examples on A.P., 5 on permutation-combination and 6 on the binomial theorem. In how many ways can a teacher select at least one but not more than 2 examples from each of these sets?`,R`Per set: 1 or 2 examples. \(({}^4C_1+{}^4C_2)({}^5C_1+{}^5C_2)({}^6C_1+{}^6C_2)=10\times15\times21=\mathbf{3150}\).`],
+[R`Out of 10 consonants and 4 vowels, how many words can be formed, each containing 3 consonants and 2 vowels?`,R`Select \({}^{10}C_3\times{}^4C_2=120\times6=720\) letter sets, then arrange each in \(5!=120\) ways (a word cares about order): \(720\times120=\mathbf{86400}\).`],
+[R`A box contains 5 different red and 6 different white balls. In how many ways can 6 balls be selected so that there are at least two balls of each colour?`,R`Cases (red, white): \((2,4)\): \({}^5C_2\,{}^6C_4=10\times15=150\); \((3,3)\): \(10\times20=200\); \((4,2)\): \(5\times15=75\). Total \(\mathbf{425}\).`],
+[R`Find the number of ways of selecting five letters from the word INDEPENDENT.`,R`Letters: I, N×3, D×2, E×3, P, T (6 kinds). Cases by pattern:<br>• all different: \({}^6C_5=6\)<br>• 2 alike + 3 different: \({}^3C_1\times{}^5C_3=30\)<br>• 3 alike + 2 different: \({}^2C_1\times{}^5C_2=20\)<br>• 2 alike + 2 alike + 1 different: \({}^3C_2\times{}^4C_1=12\)<br>• 3 alike + 2 alike: \({}^2C_1\times{}^2C_1=4\)<br>Total \(6+30+20+12+4=\mathbf{72}\).`],
+[R`A person invites 10 friends to dinner and seats (i) 5 on one round table and 5 on another, (ii) 4 on one round table and 6 on the other. Find the number of ways to arrange the guests in each case.`,R`Select the people, then arrange each table in \((k-1)!\) ways.<br>(i) \({}^{10}C_5\times4!\times4!=252\times576=\mathbf{145152}\).<br>(ii) \({}^{10}C_4\times3!\times5!=210\times6\times120=\mathbf{151200}\).<br><small>The slide shows 30240 for (ii), but \(210\times720=151200\), so that value looks like a typo. If the two tables are identical in (i), divide by 2.</small>`],
+[R`Find the number of groups that can be made from 5 different green, 4 different blue and 3 different red balls if at least 1 green and 1 blue ball must be included.`,R`Green: \(2^5-1=31\). Blue: \(2^4-1=15\). Red (any, even none): \(2^3=8\). Total \(31\times15\times8=\mathbf{3720}\).`],
+[R`There are 3 books of mathematics, 4 of science and 5 of literature. How many collections consist of (i) one book of each subject, (ii) at least one book of each subject, (iii) at least one book of literature?`,R`(i) \(3\times4\times5=\mathbf{60}\).<br>(ii) \((2^3-1)(2^4-1)(2^5-1)=7\times15\times31=\mathbf{3255}\).<br>(iii) Math and science are free (\(2^3\times2^4\)), literature non-empty: \(8\times16\times31=\mathbf{3968}\).`],
+[R`Suppose you are on a \(4\times6\) grid and want to go from the bottom-left to the top-right moving only right or up. How many paths are there?`,R`Every path has 6 rights and 4 ups = 10 moves. Choose the 4 up-moves: \({}^{10}C_4=\mathbf{210}\). (Try it in Simulation 3.)`],
+[R`A multiple-choice test has 10 questions with 4 choices each (A, B, C, D). In how many ways can the test be answered?`,R`<b>Not a combination problem.</b> Each question is answered independently with 4 choices, so by the multiplication principle: \(4^{10}=\mathbf{1048576}\) (option D).`]],
+pr:[
+{q:R`Given 5 line segments of lengths 2, 3, 4, 5, 6, the number of triangles that can be formed by joining these lines is`,o:[R`\({}^5C_3\)`,R`\({}^5C_3-3\)`,R`\({}^5C_3-2\)`,R`\({}^5C_3-1\)`],a:1,s:R`All triples: \({}^5C_3=10\). A triple fails if the two smaller sides do not exceed the largest: (2,3,5), (2,3,6), (2,4,6). So \(10-3=7\).`},
+{q:R`A student must answer 10 out of 13 questions, choosing at least 4 from the first five. The number of choices is`,o:[R`346`,R`140`,R`196`,R`280`],a:2,s:R`4 from the first 5 and 6 from the other 8: \(5\times28=140\). All 5 from the first and 5 from the other 8: \(1\times56=56\). Total \(196\).`},
+{q:R`At an election a voter may vote for any number of candidates, not more than the number to be elected. There are 10 candidates and 4 to be elected. If he votes for at least one, the number of ways is`,o:[R`5040`,R`6210`,R`385`,R`1110`],a:2,s:R`\({}^{10}C_1+{}^{10}C_2+{}^{10}C_3+{}^{10}C_4=10+45+120+210=385\).`},
+{q:R`The number of words formed by jumbling the letters of MISSISSIPPI with no two S adjacent is`,o:[R`\(8\cdot{}^6C_4\cdot{}^7C_4\)`,R`\(6\cdot7\cdot{}^8C_4\)`,R`\(6\cdot8\cdot{}^7C_4\)`,R`\(7\cdot{}^6C_4\cdot{}^8C_4\)`],a:3,s:R`First arrange the 7 non-S letters (M, I×4, P×2): \(\frac{7!}{4!\,2!}=105=7\cdot{}^6C_4\). They leave 8 gaps; choose 4 for the S's: \({}^8C_4\). Total \(7\cdot{}^6C_4\cdot{}^8C_4=7350\).`},
+{q:R`The number of diagonals of a polygon of 100 sides is`,o:[R`4,950`,R`4,850`,R`5,000`,R`10,000`],a:1,s:R`\({}^{100}C_2-100=4950-100=4850\).`},
+{q:R`A lady gives a dinner party to six guests chosen from ten friends, two of whom will not attend together. The number of ways is`,o:[R`112`,R`140`,R`164`,R`None of these`],a:1,s:R`All selections \({}^{10}C_6=210\) minus those containing both (choose the other 4 from 8): \({}^8C_4=70\). \(210-70=140\).`},
+{q:R`A team of 11 players is selected from 22, including two of them and excluding four of them. The number of ways is`,o:[R`\({}^{22}C_{11-2}\)`,R`\({}^{16}C_9\)`,R`\({}^{16}C_{11}\)`,R`\({}^{20}C_8\)`],a:1,s:R`Fix the 2 included and remove the 4 excluded: 16 players remain and 9 places are left: \({}^{16}C_9\).`},
+{q:R`A fruit basket contains 4 oranges, 5 apples and 6 mangoes (fruits of one kind are identical). The number of ways to make a selection is`,o:[R`210`,R`209`,R`208`,R`None of these`],a:1,s:R`\((4+1)(5+1)(6+1)-1=210-1=209\) (subtract the empty selection).`},
+{q:R`A box has 2 white, 3 black and 4 red balls. In how many ways can three balls be drawn so that at least one is black?`,o:[R`74`,R`84`,R`64`,R`20`],a:2,s:R`Total \({}^9C_3=84\). No black: \({}^6C_3=20\). \(84-20=64\).`},
+{q:R`From 4 officers and 8 jawans, a committee of 6 includes exactly one officer. The number of committees is`,o:[R`160`,R`200`,R`224`,R`300`],a:2,s:R`\({}^4C_1\times{}^8C_5=4\times56=224\).`},
+{q:R`From 12 books, the difference between the number of selections of 5 books when one specified book is always excluded and when one specified book is always included is`,o:[R`64`,R`118`,R`132`,R`330`],a:2,s:R`Excluded: \({}^{11}C_5=462\). Included: \({}^{11}C_4=330\). Difference \(462-330=132\).`},
+{q:R`The number of rectangles in a \(4\times4\) grid of squares (5 horizontal and 5 vertical lines) is`,o:[R`\(5\times5\)`,R`\({}^5P_2\times{}^5P_2\)`,R`\({}^5C_2\times{}^5C_2\)`,R`none of these`],a:2,s:R`A rectangle is fixed by choosing 2 of the 5 horizontal lines and 2 of the 5 vertical lines: \({}^5C_2\times{}^5C_2=100\).`},
+{q:R`There are \(n\) distinct points on a circle. The number of pentagons formed with these points as vertices equals the number of triangles. Then \(n=\)`,o:[R`7`,R`8`,R`15`,R`30`],a:1,s:R`\({}^nC_5={}^nC_3\Rightarrow5+3=n\Rightarrow n=8\).`},
+{q:R`The number of possible outcomes in a throw of \(n\) ordinary dice in which at least one die shows an odd number is`,o:[R`\(6^n-1\)`,R`\(3^n-1\)`,R`\(6^n-3^n\)`,R`none of these`],a:2,s:R`Total \(6^n\). No odd number at all (every die even): \(3^n\). So \(6^n-3^n\).`},
+{q:R`The total number of six-digit numbers in which every digit is greater than the preceding one is`,o:[R`\({}^9C_3\)`,R`\({}^{10}C_3\)`,R`\({}^9P_3\)`,R`\({}^{10}P_3\)`],a:0,s:R`Digits strictly increase, so a number is just a choice of 6 different digits (order is forced). 0 would have to be first, which is not allowed, so choose from 1-9: \({}^9C_6={}^9C_3\).`},
+{q:R`Four balls of different colours and four boxes of the same colours. The number of ways to put one ball in each box so that no ball goes into a box of its own colour is`,o:[R`9`,R`24`,R`12`,R`None of these`],a:0,s:R`Derangements of 4 objects: \(4!-{}^4C_1\,3!+{}^4C_2\,2!-{}^4C_3\,1!+1=24-24+12-4+1=9\).`},
+{q:R`If the permutations of A, B, C, D, E are written in dictionary order, the rank of DEBAC is`,o:[R`90`,R`91`,R`92`,R`93`],a:3,s:R`Words before it: starting A, B, C: \(3\times24=72\). Start D then A, B, C: \(3\times6=18\). Start DE then A: \(2\). Then DEB, 4th letter before A: none. Words before \(=92\), so the rank is \(\mathbf{93}\).`},
+{q:R`The letters of RANDOM are written in all possible orders and listed as in a dictionary. The rank of RANDOM is`,o:[R`614`,R`615`,R`613`,R`616`],a:0,s:R`Order: A D M N O R. Before R: \(5\times5!=600\). Then A: 0. Then N (D and M before it): \(2\times3!=12\). Then D: 0. Then O (M before it): \(1\times1!=1\). Words before \(=613\), so the rank is \(614\).`},
+{q:R`The number of 3-digit numbers between 100 and 999 inclusive having only two consecutive digits identical is`,o:[R`100`,R`162`,R`150`,R`None of these`],a:1,s:R`Pattern \(aab\): \(9\times9=81\). Pattern \(abb\): \(9\times9=81\) (\(a\ne b\), \(a\ne0\)). Pattern \(aba\) has no consecutive pair, \(aaa\) has three. Total \(162\).`},
+{q:R`All letters of AGAIN are permuted and the words are listed as in a dictionary. The 50th word is`,o:[R`NAAGI`,R`NAAIG`,R`IAANG`,R`INAGA`],a:1,s:R`Total \(\frac{5!}{2!}=60\). Words starting A: 24 (1-24), G: 12 (25-36), I: 12 (37-48). The 49th is the first N-word NAAGI, so the 50th is \(\mathbf{NAAIG}\).`},
+{q:R`The number of positive integers formed by using any number of digits from 0, 1, 2, 3, 4, 5 with no digit repeated in a number is`,o:[R`1200`,R`1500`,R`1600`,R`1630`],a:3,s:R`\(5+5\cdot5+5\cdot5\cdot4+5\cdot5\cdot4\cdot3+5\cdot5\cdot4\cdot3\cdot2+5\cdot5!=5+25+100+300+600+600=1630\).`},
+{q:R`The number of numbers between 1 and \(10^{10}\) which contain the digit 1 is`,o:[R`\(10^{10}-9^{10}-1\)`,R`\(9^{10}\)`,R`\(10^{10}-8^{10}\)`,R`None of these`],a:3,s:R`Write numbers from 0 to \(10^{10}-1\) as 10 digits. Without digit 1: \(9^{10}\) (this includes 0). Among 1 to \(10^{10}-1\) the count with a 1 is \((10^{10}-1)-(9^{10}-1)=10^{10}-9^{10}\), which is not listed.`},
+{q:R`If \(a\) is the number of permutations of \(x+2\) things taken all at a time, \(b\) of \(x\) things taken 11 at a time, \(c\) of \(x-11\) things taken all at a time, and \(a=182\,bc\), then \(x=\)`,o:[R`15`,R`12`,R`10`,R`18`],a:1,s:R`\(a=(x+2)!\), \(b=\frac{x!}{(x-11)!}\), \(c=(x-11)!\Rightarrow bc=x!\). \((x+2)(x+1)=182=14\times13\Rightarrow x=12\).`},
+{q:R`How many ways can the letters of TREES be ordered so that each word starts with a consonant and ends with a vowel?`,o:[R`9`,R`18`,R`24`,R`27`],a:1,s:R`End with E (the vowel). Start with T, R or S: 3 ways. The remaining 3 letters (2 consonants and one E) are all different: \(3!=6\). Total \(3\times6=18\).`},
+{q:R`All letters of EAMCET are arranged in all ways. The number of arrangements with no two vowels adjacent is`,o:[R`360`,R`144`,R`72`,R`54`],a:2,s:R`Consonants M, C, T: \(3!=6\). Vowels E, A, E go into 3 of the 4 gaps: \({}^4C_3=4\), arranged in \(\frac{3!}{2!}=3\) ways. \(6\times4\times3=72\).`},
+{q:R`Eight different mathematics books and three different chemistry books are placed on a shelf with the maths books together and the chemistry books together. The number of ways is`,o:[R`24`,R`241920`,R`483840`,R`40326`],a:2,s:R`Two blocks can swap: \(2!\). Inside: \(8!\) and \(3!\). \(2\times40320\times6=483840\).`},
+{q:R`In how many ways can the letters of MISSISSIPPI be rearranged?`,o:[R`34650`,R`11!`,R`798336`,R`24`],a:0,s:R`\(\frac{11!}{4!\,4!\,2!}=34650\) (I×4, S×4, P×2).`},
+{q:R`If you can move only right or down, how many paths lead from A (top-left) to B (bottom-right) on a grid of 6 columns and 5 rows?`,s:R`Each path has 6 right moves and 5 down moves = 11 moves. Choose the 5 down-moves: \({}^{11}C_5=\mathbf{462}\).`}]}
+];
+
+let ok=0,tot=0;
+const sc=()=>document.getElementById('score').textContent=`Quiz score: ${ok} / ${tot}`;
+const nav=document.getElementById('nav'),main=document.getElementById('main');
+const tag=(l)=>`<span class="tag">${l}</span>`;
+function solBlock(s){return `<button class="tog">Show solution</button><div class="sol">${s}</div>`}
+
+M.forEach((m,i)=>{
+  const b=document.createElement('button');b.textContent=m.t;b.onclick=()=>show(i);nav.appendChild(b);
+  const s=document.createElement('section');s.id='m'+i;
+  let h=tag('A')+'<b>Concepts</b>'+m.intro;
+  h+=`<h3>${tag('B')}Solved examples</h3>`;
+  m.ex.forEach((e,j)=>{h+=`<div class="card"><b>Example ${j+1}.</b> ${e[0]}${solBlock(e[1])}</div>`});
+  h+=`<h3>${tag('C')}Practice &amp; quiz</h3>`;
+  m.pr.forEach((q,j)=>{
+    h+=`<div class="card" data-i="${i}" data-j="${j}"><b>Q${j+1}.</b> ${q.q}`;
+    if(q.o){h+=`<div class="opts">${q.o.map((o,k)=>`<button class="opt" data-k="${k}">${'abcd'[k]}) ${o}</button>`).join('')}</div><div class="fb"></div>`}
+    h+=solBlock(q.s)+`</div>`;
+  });
+  h+=`<div class="nx"><span>${i>0?`<button class="tog" onclick="show(${i-1})">← Previous module</button>`:''}</span><span>${i<M.length-1?`<button class="tog" onclick="show(${i+1})">Next module →</button>`:''}</span></div>`;
+  s.innerHTML=h;main.appendChild(s);
+});
+
+main.addEventListener('click',e=>{
+  const t=e.target.closest('.tog');
+  if(t&&t.nextElementSibling&&t.nextElementSibling.classList.contains('sol')){
+    const s=t.nextElementSibling;s.classList.toggle('show');
+    t.textContent=s.classList.contains('show')?'Hide solution':'Show solution';return;
+  }
+  const f=e.target.closest('.fc');if(f){f.classList.toggle('open');return}
+  const o=e.target.closest('.opt');
+  if(o){
+    const card=o.closest('.card'),q=M[card.dataset.i].pr[card.dataset.j],k=+o.dataset.k;
+    const all=card.querySelectorAll('.opt');all.forEach(x=>x.disabled=true);
+    all[q.a].classList.add('right');tot++;
+    const fb=card.querySelector('.fb');
+    if(k===q.a){ok++;fb.style.color='var(--ok)';fb.textContent='Correct!'}
+    else{o.classList.add('wrong');fb.style.color='var(--bad)';fb.textContent='Not quite. Correct answer: '+'abcd'[q.a]+')'}
+    card.querySelector('.sol').classList.add('show');
+    card.querySelector('.tog').textContent='Hide solution';sc();
+  }
+});
+
+const fact=x=>x<2?1:x*fact(x-1);
+const Cn=(n,r)=>(r<0||r>n)?0:Math.round(fact(n)/(fact(r)*fact(n-r)));
+const LET='ABCDEFGH';
+function combos(n,r){const res=[];(function g(s,c){if(c.length===r){res.push(c);return}for(let i=s;i<n;i++)g(i+1,c+LET[i])})(0,'');return res}
+function perms(s){if(s.length<2)return[s];const o=[];for(let i=0;i<s.length;i++)perms(s.slice(0,i)+s.slice(i+1)).forEach(p=>o.push(s[i]+p));return o}
+function initW(){
+  document.querySelectorAll('[data-w=comb]').forEach(w=>{
+    const n=w.querySelector('.n'),r=w.querySelector('.r'),out=w.querySelector('.out'),ch=w.querySelector('.chips'),pm=w.querySelector('.perm');
+    const upd=()=>{
+      const N=+n.value;r.max=N;if(+r.value>N)r.value=N;const R=+r.value;
+      w.querySelector('.nv').textContent=N;w.querySelector('.rv').textContent=R;
+      const cs=combos(N,R),P=fact(N)/fact(N-R);
+      out.textContent=`Letters ${LET.slice(0,N)} · C(${N},${R}) = ${cs.length} combinations · P(${N},${R}) = ${P} permutations = ${fact(R)}! × ${cs.length}`;
+      ch.innerHTML=cs.map(c=>`<button class="chip">${c}</button>`).join('');
+      pm.textContent='';
+    };
+    n.oninput=r.oninput=upd;
+    ch.onclick=e=>{const b=e.target.closest('.chip');if(!b)return;
+      ch.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+      const p=perms(b.textContent);
+      pm.innerHTML=`<b>${b.textContent}</b> is <u>one</u> combination but hides <b>${p.length} = ${b.textContent.length}!</b> permutations: ${p.length>24?p.slice(0,24).join(', ')+' …':p.join(', ')}`};
+    upd();
+  });
+  document.querySelectorAll('[data-w=pas]').forEach(w=>{
+    const box=w.querySelector('.pas'),msg=w.querySelector('.pmsg');
+    let h='';for(let n=0;n<=9;n++){h+='<div class="prw">';for(let r=0;r<=n;r++)h+=`<button class="pc" data-n="${n}" data-r="${r}">${Cn(n,r)}</button>`;h+='</div>'}
+    box.innerHTML=h;
+    box.onclick=e=>{const b=e.target.closest('.pc');if(!b)return;
+      box.querySelectorAll('.pc').forEach(x=>x.classList.remove('sel','par'));
+      const n=+b.dataset.n,r=+b.dataset.r;b.classList.add('sel');
+      if(n===0){msg.textContent='C(0,0) = 1: the top of the triangle.';return}
+      [[n-1,r-1],[n-1,r]].forEach(([a,c])=>{const p=box.querySelector(`.pc[data-n="${a}"][data-r="${c}"]`);if(p)p.classList.add('par')});
+      msg.textContent=`C(${n},${r}) = C(${n-1},${r-1}) + C(${n-1},${r}) = ${Cn(n-1,r-1)} + ${Cn(n-1,r)} = ${Cn(n,r)}`};
+  });
+  document.querySelectorAll('[data-w=grid]').forEach(w=>{
+    const cc=w.querySelector('.cc'),rr=w.querySelector('.rr'),g=w.querySelector('.gtw'),out=w.querySelector('.out');
+    const upd=()=>{
+      const c=+cc.value,r=+rr.value;
+      w.querySelector('.ccv').textContent=c;w.querySelector('.rrv').textContent=r;
+      let h='<table class="gt">';
+      for(let i=r;i>=0;i--){h+='<tr>';for(let j=0;j<=c;j++){const cls=(i===0&&j===0)?' class="st"':(i===r&&j===c)?' class="en"':'';h+=`<td${cls}>${Cn(i+j,i)}</td>`}h+='</tr>'}
+      g.innerHTML=h+'</table>';
+      out.textContent=`Paths = C(${c+r},${r}) = ${Cn(c+r,r)}  (${c} rights and ${r} ups, choose the positions of the ups). Green = start, yellow = end.`;
+    };
+    cc.oninput=rr.oninput=upd;upd();
+  });
+}
+
+function show(i){
+  document.querySelectorAll('section').forEach((s,k)=>s.classList.toggle('on',k===i));
+  nav.querySelectorAll('button').forEach((b,k)=>b.classList.toggle('on',k===i));
+  window.scrollTo({top:0});
+  if(window.MathJax&&MathJax.typesetPromise)MathJax.typesetPromise();
+}
+initW();
+show(0);
+</script>
+</body>
+</html>
